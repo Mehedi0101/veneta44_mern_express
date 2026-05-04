@@ -1,8 +1,16 @@
 import { Model, Types } from 'mongoose';
-import { PERMISSION_LEVEL, USER_ROLE } from './user.constant';
+import { PERMISSION_LEVEL, USER_ROLE, USER_STATUS } from './user.constant';
 
+/**
+ * Basic Types
+ */
 export type TPermissionLevel = (typeof PERMISSION_LEVEL)[keyof typeof PERMISSION_LEVEL];
+export type TUserRole = (typeof USER_ROLE)[keyof typeof USER_ROLE];
+export type TUserStatus = (typeof USER_STATUS)[keyof typeof USER_STATUS];
 
+/**
+ * User Permissions
+ */
 export type TUserPermissions = {
   accountPermission: TPermissionLevel;
   orderPermission: TPermissionLevel;
@@ -11,22 +19,26 @@ export type TUserPermissions = {
   priceListPermission: TPermissionLevel; // supplier only
 };
 
+/**
+ * Main User Type
+ */
 export type TUser = {
   organizationId: Types.ObjectId;
   organizationType: 'venue' | 'supplier';
   name: string;
-  role: (typeof USER_ROLE)[keyof typeof USER_ROLE];
+  role: TUserRole;
   email: string;
   password: string;
   phone: string;
-  status: 'active' | 'inactive';
+  status: TUserStatus;
   permissions: TUserPermissions;
   isDeleted: boolean;
-  _id?: Types.ObjectId;
 };
 
+/**
+ * User Model Type (with static methods)
+ */
 export interface IUserModel extends Model<TUser> {
   isUserExistsByEmail(email: string): Promise<TUser | null>;
-  isUserExistsById(id: string): Promise<TUser | null>;
   isPasswordMatched(plainTextPassword: string, hashedPassword: string): Promise<boolean>;
 }

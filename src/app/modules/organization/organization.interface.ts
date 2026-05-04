@@ -1,8 +1,15 @@
-import { Types } from 'mongoose';
+import { Model, Types } from 'mongoose';
+import { ORGANIZATION_STATUS, ORGANIZATION_TYPE } from './organization.constant';
 
-export type TOrganizationType = 'venue' | 'supplier';
-export type TOrganizationStatus = 'inactive' | 'active' | 'disabled';
+/**
+ * Basic Types
+ */
+export type TOrganizationType = (typeof ORGANIZATION_TYPE)[keyof typeof ORGANIZATION_TYPE];
+export type TOrganizationStatus = (typeof ORGANIZATION_STATUS)[keyof typeof ORGANIZATION_STATUS];
 
+/**
+ * Company Information
+ */
 export type TCompanyInformation = {
   companyName: string;
   companyAddress: string;
@@ -13,6 +20,9 @@ export type TCompanyInformation = {
   yearsInBusiness: string;
 };
 
+/**
+ * Contact Details
+ */
 export type TContactDetails = {
   name: string;
   role: string;
@@ -20,29 +30,41 @@ export type TContactDetails = {
   phone: string;
 };
 
+/**
+ * Contact Information
+ */
 export type TContactInformation = {
   ownerContactDetails: TContactDetails;
   accountContact: TContactDetails;
 };
 
+/**
+ * Delivery Information
+ */
 export type TDeliveryInformation = {
   contactName: string;
   role: string;
   email: string;
   phone: string;
-  minimumOrderForDelivery?: string; // supplier only
-  deliveryTimesAvailable?: string[]; // supplier only
-  deliveryAreas?: string[]; // supplier only
-  deliveryDays?: string[]; // supplier only
-  offDays?: string[]; // supplier only
+  minimumOrderForDelivery?: string;
+  deliveryTimesAvailable?: string[];
+  deliveryAreas?: string[];
+  deliveryDays?: string[];
+  offDays?: string[];
 };
 
+/**
+ * Reference Details
+ */
 export type TReference = {
   companyName: string;
   contactName: string;
   email: string;
 };
 
+/**
+ * Reference Information
+ */
 export type TReferenceInformation = {
   reference1: TReference;
   reference2: TReference;
@@ -50,6 +72,9 @@ export type TReferenceInformation = {
   agentName?: string;
 };
 
+/**
+ * Payment Information
+ */
 export type TPaymentInformation = {
   paymentMethod: string;
   accountHolderName: string;
@@ -59,6 +84,9 @@ export type TPaymentInformation = {
   accountNumber: string;
 };
 
+/**
+ * Subscription Details
+ */
 export type TSubscription = {
   subscriptionPackageId: Types.ObjectId;
   status: 'active' | 'expired';
@@ -66,6 +94,9 @@ export type TSubscription = {
   expireDate: Date;
 };
 
+/**
+ * Commission Details
+ */
 export type TCommission = {
   rate: number;
   effectiveFrom: Date;
@@ -73,6 +104,9 @@ export type TCommission = {
   maximum: number;
 };
 
+/**
+ * Main Organization Type
+ */
 export type TOrganization = {
   organizationType: TOrganizationType;
   status: TOrganizationStatus;
@@ -83,5 +117,9 @@ export type TOrganization = {
   paymentInformation: TPaymentInformation;
   subscription?: TSubscription;
   commission?: TCommission;
-  _id?: Types.ObjectId;
 };
+
+/**
+ * Organization Model Type
+ */
+export type OrganizationModel = Model<TOrganization>;

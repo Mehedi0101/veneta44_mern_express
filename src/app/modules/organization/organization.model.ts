@@ -1,7 +1,11 @@
 import { Schema, model } from 'mongoose';
-import { TOrganization } from './organization.interface';
+import { ORGANIZATION_STATUS, ORGANIZATION_TYPE } from './organization.constant';
+import { OrganizationModel, TOrganization } from './organization.interface';
 
-const companyInformationSchema = new Schema({
+/**
+ * Company Information Schema
+ */
+const companyInfoSchema = new Schema({
   companyName: { type: String, required: true },
   companyAddress: { type: String, required: true },
   registrationNumber: { type: String, required: true },
@@ -9,21 +13,30 @@ const companyInformationSchema = new Schema({
   tradingName: { type: String, required: true },
   tradingAddress: { type: String, required: true },
   yearsInBusiness: { type: String, required: true },
-});
+}, { _id: false });
 
+/**
+ * Contact Details Schema
+ */
 const contactDetailsSchema = new Schema({
   name: { type: String, required: true },
   role: { type: String, required: true },
   email: { type: String, required: true },
   phone: { type: String, required: true },
-});
+}, { _id: false });
 
-const contactInformationSchema = new Schema({
+/**
+ * Contact Information Schema
+ */
+const contactInfoSchema = new Schema({
   ownerContactDetails: { type: contactDetailsSchema, required: true },
   accountContact: { type: contactDetailsSchema, required: true },
-});
+}, { _id: false });
 
-const deliveryInformationSchema = new Schema({
+/**
+ * Delivery Information Schema
+ */
+const deliveryInfoSchema = new Schema({
   contactName: { type: String, required: true },
   role: { type: String, required: true },
   email: { type: String, required: true },
@@ -33,67 +46,68 @@ const deliveryInformationSchema = new Schema({
   deliveryAreas: { type: [String] },
   deliveryDays: { type: [String] },
   offDays: { type: [String] },
-});
+}, { _id: false });
 
+/**
+ * Reference Schema
+ */
 const referenceSchema = new Schema({
   companyName: { type: String, required: true },
   contactName: { type: String, required: true },
   email: { type: String, required: true },
-});
+}, { _id: false });
 
-const referenceInformationSchema = new Schema({
-  reference1: { type: referenceSchema, required: true },
-  reference2: { type: referenceSchema, required: true },
-  howDidYouHearAboutUs: { type: String, required: true },
-  agentName: { type: String },
-});
-
-const paymentInformationSchema = new Schema({
-  paymentMethod: { type: String, required: true },
-  accountHolderName: { type: String, required: true },
-  bankName: { type: String, required: true },
-  bankAddress: { type: String, required: true },
-  sortCode: { type: String, required: true },
-  accountNumber: { type: String, required: true },
-});
-
-const subscriptionSchema = new Schema({
-  subscriptionPackageId: { type: Schema.Types.ObjectId, ref: 'SubscriptionPackage', required: true },
-  status: { type: String, enum: ['active', 'expired'], required: true },
-  lastBilledAt: { type: Date, required: true },
-  expireDate: { type: Date, required: true },
-});
-
-const commissionSchema = new Schema({
-  rate: { type: Number, required: true },
-  effectiveFrom: { type: Date, required: true },
-  minimum: { type: Number, required: true },
-  maximum: { type: Number, required: true },
-});
-
-const organizationSchema = new Schema<TOrganization>(
+/**
+ * Main Organization Schema
+ */
+const organizationSchema = new Schema<TOrganization, OrganizationModel>(
   {
     organizationType: {
       type: String,
-      enum: ['venue', 'supplier'],
+      enum: Object.values(ORGANIZATION_TYPE),
       required: true,
     },
     status: {
       type: String,
-      enum: ['inactive', 'active', 'disabled'],
-      default: 'inactive',
+      enum: Object.values(ORGANIZATION_STATUS),
+      default: ORGANIZATION_STATUS.INACTIVE,
     },
-    companyInformation: { type: companyInformationSchema, required: true },
-    contactInformation: { type: contactInformationSchema, required: true },
-    deliveryInformation: { type: deliveryInformationSchema, required: true },
-    referenceInformation: { type: referenceInformationSchema, required: true },
-    paymentInformation: { type: paymentInformationSchema, required: true },
-    subscription: { type: subscriptionSchema },
-    commission: { type: commissionSchema },
+    companyInformation: { type: companyInfoSchema, required: true },
+    contactInformation: { type: contactInfoSchema, required: true },
+    deliveryInformation: { type: deliveryInfoSchema, required: true },
+    referenceInformation: {
+      reference1: { type: referenceSchema, required: true },
+      reference2: { type: referenceSchema, required: true },
+      howDidYouHearAboutUs: { type: String, required: true },
+      agentName: { type: String },
+    },
+    paymentInformation: {
+      paymentMethod: { type: String, required: true },
+      accountHolderName: { type: String, required: true },
+      bankName: { type: String, required: true },
+      bankAddress: { type: String, required: true },
+      sortCode: { type: String, required: true },
+      accountNumber: { type: String, required: true },
+    },
+    subscription: {
+      subscriptionPackageId: { type: Schema.Types.ObjectId, ref: 'SubscriptionPackage' },
+      status: { type: String, enum: ['active', 'expired'] },
+      lastBilledAt: { type: Date },
+      expireDate: { type: Date },
+    },
+    commission: {
+      rate: { type: Number },
+      effectiveFrom: { type: Date },
+      minimum: { type: Number },
+      maximum: { type: Number },
+    },
   },
   {
     timestamps: true,
   },
 );
 
-export const Organization = model<TOrganization>('Organization', organizationSchema);
+/**
+ * Organization Model
+ */
+export const Organization = model<TOrganization, OrganizationModel>('Organization', organizationSchema);
