@@ -1,5 +1,6 @@
 import { Model, Types } from 'mongoose';
 import { PERMISSION_LEVEL, USER_ROLE, USER_STATUS } from './user.constant';
+import { TOrganizationType } from '../organization/organization.interface';
 
 /**
  * Basic Types
@@ -24,7 +25,7 @@ export type TUserPermissions = {
  */
 export type TUser = {
   organizationId: Types.ObjectId;
-  organizationType: 'venue' | 'supplier';
+  organizationType: TOrganizationType;
   name: string;
   role: TUserRole;
   email: string;

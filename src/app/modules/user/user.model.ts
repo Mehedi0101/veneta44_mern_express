@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import { Schema, model } from 'mongoose';
 import config from '../../config';
+import { ORGANIZATION_TYPE } from '../organization/organization.constant';
 import { PERMISSION_LEVEL, USER_ROLE, USER_STATUS } from './user.constant';
 import { IUserModel, TUser } from './user.interface';
 
@@ -21,7 +22,7 @@ const userPermissionsSchema = new Schema({
 const userSchema = new Schema<TUser, IUserModel>(
   {
     organizationId: { type: Schema.Types.ObjectId, ref: 'Organization', required: true },
-    organizationType: { type: String, enum: ['venue', 'supplier'], required: true },
+    organizationType: { type: String, enum: Object.values(ORGANIZATION_TYPE), required: true },
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true, select: 0 },
